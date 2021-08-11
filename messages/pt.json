@@ -20,7 +20,7 @@
   "store/bazaar-voice.filter.three-stars": "3 Estrelas",
   "store/bazaar-voice.filter.four-stars": "4 Estrelas",
   "store/bazaar-voice.filter.five-stars": "5 Estrelas",
-  "store/bazaar-voice.no-reviews":"Não há comentários para este produto ainda",
+  "store/bazaar-voice.no-reviews": "Não há comentários para este produto ainda",
   "store/bazaar-voice.no-reviews-for-filter": "Não há comentários para este produto que correspondam ao filtro selecionado",
   "store/bazaar-voice.timeAgo": "atrás",
   "store/bazaar-voice.timeAgo.year": "ano",
@@ -36,5 +36,5 @@
   "store/bazaar-voice.timeAgo.minute": "minuto",
   "store/bazaar-voice.timeAgo.minutes": "minutos",
   "store/bazaar-voice.timeAgo.justNow": "Agora mesmo",
-  "store/bazaar-voice.original-post.text": ""
+  "store/bazaar-voice.original-post.text": "Originally posted on "
 }
