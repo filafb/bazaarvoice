@@ -6,6 +6,17 @@ interface Window extends Window {
     settings: {
       'vtex.bazaarvoice': Settings
     }
+    rootPath: string
+  }
+}
+
+declare namespace NodeJS {
+  interface Global extends Global {
+    __hostname__: string
+    __pathname__: string
+    __RUNTIME__: {
+      rootPath: string
+    }
   }
 }
 
