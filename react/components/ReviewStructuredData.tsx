@@ -1,5 +1,7 @@
 import React, { FC } from 'react'
 
+import { getBaseUrl } from '../modules/baseUrl'
+
 interface Props {
   productName: string
   productId: string
@@ -18,10 +20,12 @@ const ReviewStructuredData: FC<Props> = ({
   productUrl,
   review,
 }) => {
+  const baseUrl = getBaseUrl()
+
   const reviewStructuredData = {
     '@context': 'http://schema.org',
     '@type': 'Product',
-    '@id': productUrl,
+    '@id': `${baseUrl}/${productUrl}/p`,
     mpn: productId,
     name: productName,
     review: {
@@ -42,6 +46,7 @@ const ReviewStructuredData: FC<Props> = ({
   return (
     <script
       type="application/ld+json"
+      data-testid="schemaorg-review"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(reviewStructuredData) }}
     />
   )

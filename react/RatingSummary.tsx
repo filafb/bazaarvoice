@@ -53,7 +53,7 @@ const RatingSummary = ({ appSettings }: { appSettings: Settings }) => {
             <AggregateStructuredData
               productName={product?.productName}
               productId={product?.productId}
-              productUrl={product?.link}
+              productUrl={product?.linkText}
               average={average}
               total={totalReviews}
             />

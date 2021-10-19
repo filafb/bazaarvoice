@@ -224,7 +224,7 @@ const Review: FunctionComponent<ReviewProps> = ({
       <ReviewStructuredData
         productName={product.productName}
         productId={product.productId}
-        productUrl={product.link}
+        productUrl={product.linkText}
         review={review}
       />
       <div className={`${styles.reviewRating} flex items-center`}>
