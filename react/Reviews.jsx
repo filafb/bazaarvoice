@@ -7,7 +7,7 @@ import React, {
 } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { ProductContext } from 'vtex.product-context'
-import { withApollo } from 'react-apollo'
+import { withApollo, useQuery } from 'react-apollo'
 import { Pagination, Modal } from 'vtex.styleguide'
 
 import Stars from './components/Stars'
@@ -15,11 +15,13 @@ import Histogram from './components/Histogram'
 import NoReviews from './components/NoReviews'
 import ReviewsContainer from './components/ReviewsContainer'
 import queryRatingSummary from './graphql/queries/queryRatingSummary.gql'
+import queryWrittenReviews from './graphql/queries/queryWrittenReviews.gql'
 import { trackPageViewData } from './modules/trackers'
 import styles from './styles.css'
 
 const initialState = {
   reviews: null,
+  writtenReviews: [],
   average: 0,
   histogram: [],
   secondaryRatingsAverage: [],
@@ -45,10 +47,17 @@ const reducer = (state, action) => {
         histogram: action.histogram,
         secondaryRatingsAverage: action.secondaryRatingsAverage,
         percentage: action.percentage,
-        count: action.count,
-        paging: action.paging,
         hasError: false,
         relatedProducts: action.relatedProducts,
+      }
+    }
+
+    case 'SET_WRITTEN_REVIEWS': {
+      return {
+        ...state,
+        writtenReviews: action.writtenReviews,
+        paging: action.paging,
+        count: action.count,
       }
     }
 
@@ -195,6 +204,34 @@ const Reviews = ({
 
   useDefaultSort(dispatch, appSettings, state.loadedConfigData)
 
+  const { data } = useQuery(queryWrittenReviews, {
+    skip: !product,
+    variables: {
+      sort: selected,
+      offset,
+      pageId: JSON.stringify({
+        linkText,
+        productId,
+        productReference,
+      }),
+      filter: parseInt(filter, 10) || 0,
+      quantity: reviewsQuantityToShow,
+    },
+  })
+
+  useEffect(() => {
+    data &&
+      dispatch({
+        type: 'SET_WRITTEN_REVIEWS',
+        writtenReviews: data.writtenReviews.Results,
+        paging: {
+          pageSize: data.writtenReviews.Limit,
+          totalResults: data.writtenReviews.TotalResults,
+        },
+        count: data.writtenReviews.TotalResults,
+      })
+  }, [data])
+
   useEffect(() => {
     if (!linkText && !productId && !productReference) {
       return
@@ -205,7 +242,7 @@ const Reviews = ({
         query: queryRatingSummary,
         variables: {
           sort: selected,
-          offset,
+          offset: 0,
           pageId: JSON.stringify({
             linkText,
             productId,
@@ -221,10 +258,6 @@ const Reviews = ({
           : null
 
         const reviews = response.data.productReviews.Results
-        const paging = {
-          pageSize: response.data.productReviews.Limit,
-          totalResults: response.data.productReviews.TotalResults,
-        }
 
         const currentHistogram =
           rollup != null ? rollup.LocalRatingDistribution : []
@@ -245,14 +278,12 @@ const Reviews = ({
           reviews,
           average: currentAverage,
           histogram: currentHistogram,
-          count: currentCount,
           secondaryRatingsAverage: currentSecondaryRatingsAverages,
-          paging,
           percentage,
           relatedProducts: response.data.productReviews.Includes.AllProducts,
         })
         if (state.loadedConfigData) {
-          trackPageViewData(productId, 'Product', state.count)
+          trackPageViewData(productId, 'Product', count)
         }
       })
       .catch((error) => {
@@ -264,7 +295,6 @@ const Reviews = ({
   }, [
     filter,
     selected,
-    offset,
     count,
     average,
     linkText,
@@ -273,7 +303,6 @@ const Reviews = ({
     client,
     reviewsQuantityToShow,
     state.loadedConfigData,
-    state.count,
     relatedProducts,
   ])
 
@@ -348,7 +377,7 @@ const Reviews = ({
       className={`${styles.reviews} mw8 center`}
     >
       <h3 className={`${styles.reviewsTitle} t-heading-3 b--muted-5 mb5`}>
-        <FormattedMessage id="store/bazaar-voice.reviews" />
+        <FormattedMessage id="store/bazaar-voice.ratings" />
       </h3>
       <div className="review__rating pb4">
         <Stars rating={fixedAverage} />
@@ -370,7 +399,7 @@ const Reviews = ({
         filter={filter}
         productIdentifier={productIdentifier}
         linkText={linkText}
-        reviews={state.reviews}
+        reviews={state.writtenReviews}
         appSettings={appSettings}
         relatedProducts={relatedProducts}
       />

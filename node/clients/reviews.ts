@@ -10,6 +10,7 @@ interface GetReviewArgs {
   filter: string
   quantity: number
   contentLocale: string
+  isRatingsOnly: boolean
 }
 
 export default class Reviews extends ExternalClient {
@@ -25,9 +26,14 @@ export default class Reviews extends ExternalClient {
     filter,
     quantity,
     contentLocale,
+    isRatingsOnly,
   }: GetReviewArgs): Promise<BazaarVoiceReviews> {
-    const endpoint = `/data/reviews.json?apiversion=5.4&passkey=${appKey}&Filter=ProductId:eq:${fieldProductId}&Sort=${sort}&Limit=${quantity}&Offset=${offset}&Include=Products,Comments&Stats=Reviews&Filter=${
-      filter ? `Rating:eq:${filter}` : 'IsRatingsOnly:eq:false'
+    const endpoint = `/data/reviews.json?apiversion=5.4&passkey=${appKey}&Filter=ProductId:eq:${fieldProductId}&Sort=${sort}&Limit=${quantity}&Offset=${offset}&Include=Products,Comments&Stats=Reviews${
+      filter
+        ? `&Filter=Rating:eq:${filter}`
+        : isRatingsOnly
+        ? ''
+        : '&Filter=IsRatingsOnly:eq:false'
     }${contentLocale ? `&Filter=ContentLocale:eq:${contentLocale}` : ``}`
 
     return this.http.get(endpoint, {
