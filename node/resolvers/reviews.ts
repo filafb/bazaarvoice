@@ -119,6 +119,7 @@ export const queries = {
           filter,
           quantity: newQuantity,
           contentLocale: locale,
+          isRatingsOnly: true,
         })
       } catch (error) {
         throw new TypeError(error.response.data)
@@ -147,6 +148,7 @@ export const queries = {
             filter,
             quantity: 100,
             contentLocale: locale,
+            isRatingsOnly: true,
           })
         } catch (error) {
           throw new TypeError(error.response.data)
@@ -239,6 +241,67 @@ export const queries = {
           Products: products,
           AllProducts: arrProducts,
         },
+        Results: reviews.Results.map((result) => {
+          const secondaryRatings = convertSecondaryRatings(
+            result.SecondaryRatings as Record<string, SecondaryRating>,
+            result.SecondaryRatingsOrder
+          ) as SecondaryRating[]
+
+          return {
+            ...result,
+            SecondaryRatings: secondaryRatings,
+          }
+        }),
+      }
+    })
+  },
+  writtenReviews: async (
+    _: any,
+    args: any,
+    ctx: Context
+  ): Promise<BazaarVoiceReviews> => {
+    const { sort, offset, pageId, filter, quantity } = args
+    const {
+      clients: { apps, reviews: reviewsClient },
+      vtex: { binding },
+    } = ctx
+
+    const appId = process.env.VTEX_APP_ID
+
+    return apps.getAppSettings(appId).then(async (appSettings: any) => {
+      const bindingId = binding?.id
+      const settings = getBindingSettings(appSettings, bindingId)
+      const { appKey, uniqueId, locale } = settings
+      const product = JSON.parse(pageId)
+      const fieldProductId = product[uniqueId]
+
+      let reviews: BazaarVoiceReviews
+      const newQuantity = quantity || DEFAULT_REVIEWS_QUANTITY
+
+      try {
+        reviews = await reviewsClient.getReviews({
+          appKey,
+          fieldProductId,
+          sort,
+          offset,
+          filter,
+          quantity: newQuantity,
+          contentLocale: locale,
+          isRatingsOnly: false,
+        })
+      } catch (error) {
+        throw new TypeError(error.response.data)
+      }
+
+      if (reviews.HasErrors && reviews.Errors) {
+        throw new GraphQLError(
+          reviews.Errors[0].Message,
+          parseInt(reviews.Errors[0].Code, 10)
+        )
+      }
+
+      return {
+        ...reviews,
         Results: reviews.Results.map((result) => {
           const secondaryRatings = convertSecondaryRatings(
             result.SecondaryRatings as Record<string, SecondaryRating>,

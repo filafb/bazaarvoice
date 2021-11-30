@@ -1,0 +1,57 @@
+query writtenReviews(
+  $sort: String!
+  $filter: Int
+  $offset: Int
+  $pageId: String
+  $quantity: Int
+) {
+  writtenReviews(
+    sort: $sort
+    offset: $offset
+    pageId: $pageId
+    filter: $filter
+    quantity: $quantity
+  ) @context(provider: "vtex.bazaarvoice") {
+    Limit
+    Offset
+    TotalResults
+    Results {
+      Id
+      ProductId
+      Rating
+      SubmissionTime
+      Title
+      UserNickname
+      UserLocation
+      ReviewText
+      ClientResponses {
+        Department
+        Response
+        ResponseType
+        ResponseSource
+        Name
+        Date
+      }
+      Photos {
+        Sizes {
+          normal {
+            Url
+          }
+          thumbnail {
+            Url
+          }
+        }
+      }
+      SecondaryRatings {
+        Value
+        Id
+        ValueRange
+        ValueLabel
+        MinLabel
+        Label
+        DisplayType
+        MaxLabel
+      }
+    }
+  }
+}

@@ -32,7 +32,7 @@ const RatingSummary = ({ appSettings }: { appSettings: Settings }) => {
           .AverageOverallRating
       : null
 
-  const totalReviews =
+  const totalRatings =
     !loading && !error && data && data.productReviews
       ? data.productReviews.TotalResults
       : null
@@ -55,7 +55,7 @@ const RatingSummary = ({ appSettings }: { appSettings: Settings }) => {
               productId={product?.productId}
               productUrl={product?.linkText}
               average={average}
-              total={totalReviews}
+              total={totalRatings}
             />
             <div className={`${styles.ratingSummaryStars} nowrap dib`}>
               <Stars rating={average} />
@@ -66,8 +66,8 @@ const RatingSummary = ({ appSettings }: { appSettings: Settings }) => {
             >
               <a href="#reviews" className="c-link">
                 <FormattedMessage
-                  id="reviews"
-                  values={{ total: totalReviews }}
+                  id="ratings"
+                  values={{ total: totalRatings }}
                 />
               </a>
             </span>

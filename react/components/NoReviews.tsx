@@ -18,7 +18,7 @@ const NoReviews: FunctionComponent<NoReviewsProps> = ({
   return (
     <div className={`${styles.reviews} mw8 center c-on-base`}>
       <h3 className={`${styles.reviewsTitle} t-heading-3 b--muted-5 mb5`}>
-        <FormattedMessage id="store/bazaar-voice.reviews" />
+        <FormattedMessage id="store/bazaar-voice.ratings" />
       </h3>
       <div className={styles.reviewsContainer}>
         <div className={`${styles.noReviewsContainer} bw2 b--muted-5 mb5 pb3`}>

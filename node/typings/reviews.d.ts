@@ -5,6 +5,7 @@ export interface BazaarVoiceReviews {
   Results: Result[]
   Includes: Include
   Locale: string
+  IsRatingsOnly: boolean
 
   HasErrors?: boolean
   Errors?: Error[]

@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Use product's URI as @id on `Product` schema for `RatingSummary` and `Review` blocks.
 
+## [2.2.2] - 2021-11-18
+
+### Added
+
+- Added another query for only written reviews.
+
 ## [2.2.1] - 2021-07-13
 
 ### Added
